@@ -1,0 +1,17 @@
+style
+        h1 { 
+            color: blue;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #979797;
+            padding: 40px;
+         }
+         img {
+            display: block;
+            margin: 0 auto;
+            width: 50%;
+            border-radius: 20px;
+         }
+       
+
+    
