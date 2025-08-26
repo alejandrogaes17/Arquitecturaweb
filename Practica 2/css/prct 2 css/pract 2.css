@@ -1,0 +1,12 @@
+body, html {
+    background: #6dbede;
+background: linear-gradient(90deg,rgba(109, 190, 222, 1) 0%, rgba(28, 69, 45, 1) 67%, rgba(237, 221, 83, 1) 100%);
+}
+
+h1 {
+    color: white;
+}
+
+p {
+    color: greenyellow;
+}
