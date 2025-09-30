@@ -1,0 +1,46 @@
+html {
+    font-size: 16px;
+    text-align: center;
+    background-color: aliceblue;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+div {
+ font-size: 4rem;
+ background-color: cornflowerblue;
+ width: 500px;
+ margin: 20px;
+ border: 10px solid beige;
+ border-radius: 15px;
+ display: block;
+ margin: 0px auto;
+ box-shadow: 5px 22px 30px 15px rgba(57,240,228,0.56);
+-webkit-box-shadow: 5px 22px 30px 15px rgba(57,240,228,0.56);
+-moz-box-shadow: 5px 22px 30px 15px rgba(57,240,228,0.56);
+}
+
+p {
+    font-size: 1.5rem;
+}
+#hijo {
+color: blue;
+background-color: mediumspringgreen;
+font-size: 1rem;
+}
+@media (max-width: 600px) {
+    html {
+        font-size: 12px;
+    }
+    div {
+        width: 300px;
+        font-size: 3rem;
+    }
+    p {
+        font-size: 1rem;
+    }
+    #hijo {
+        font-size: 0.75rem;
+    }
+}
