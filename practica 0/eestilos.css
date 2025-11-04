@@ -1,0 +1,73 @@
+
+        body {
+            background-color: #e6f7ff;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            .momo-trust-display-regular {
+  font-family: "Momo Trust Display", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+        }
+        
+        .title {
+            text-align: center;
+            font-size: 2.8rem;
+            font-style: cursive;
+             font-family: "Dancing Scrip", cursive;
+            margin: 40px 0 20px;
+            color: #03306a;
+        }
+
+        /* Galería con las tarjetas una al lado de otra, sin espacio entre ellas */
+        .gallery {
+            display: flex;
+            justify-content: flex-start; /* alineadas al inicio */
+            gap: 0;                      /* sin espacio entre tarjetas */
+            align-items: flex-start;
+            padding: 0 0 40px;
+            flex-wrap: center;             /* se ajustan a la siguiente línea si no caben */
+        }
+
+        /* Contenedor de la tarjeta: tamaño uniforme y grande */
+        .card {
+            width: min(45%, 700px);
+            aspect-ratio: 3 / 4;
+            flex: 0 1 auto;
+            text-align: center;
+        }
+
+        /* La imagen ocupa todo el cuadro, recortando si es necesario */
+        .card img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* Ocultar el cuadro/leyenda para que solo se vea la imagen */
+        .caption {
+            display: none !important;
+        }
+        p.footer-text {
+            background-color: #03306a;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+  font-family: "Momo Trust Display", sans-serif;
+  text-decoration: bold;
+
+        }
+
+        /* Ajuste para pantallas pequeñas: cada tarjeta ocupa el ancho disponible */
+        @media (max-width: 800px) {
+            .card {
+                width: 100%;
+                aspect-ratio: 4 / 3;
+            }
+        }
