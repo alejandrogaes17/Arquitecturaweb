@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAPÁ</title>
+    <link rel="stylesheet" href="estilos.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Evita que el contenido quede oculto por el footer fijo */
+        body {
+            margin: 0;
+            padding-bottom: 80px; /* espacio para el footer */
+            font-family: Arial, sans-serif;
+        }
+
+        .title {
+            text-align: center;
+            margin-top: 20px;
+            color: gold;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            width: 300px;
+            text-align: center;
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .description {
+            margin-top: 8px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            outline: none;
+            resize: none;
+            color: aliceblue;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(42, 255, 34, 0.95);
+            text-align: center;
+            padding: 12px 0;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .footer-text {
+            margin: 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">QUERIDO PAPÁ</h1>
+
+    <div class="gallery">
+        <figure class="card">
+            <img src="img 4.jpg" alt="Imagen 1">
+            <p class="description" contenteditable="true">Querido papá, quiero decirte lo mucho que te quiero, que siempre le doy las gracias a Dios por tenerte, por ponerte a ti como mi mayor ejemplo a seguir, siempre tomo en cuenta todos tus sacrificios, por tus palabras y por cada momento en que estuviste cuando te necesité. No sabes cuánto te admiro </p>
+        </figure>
+
+        <figure class="card">
+            <img src="img 2.jpg" alt="Imagen 2">
+            <p class="description" contenteditable="true">Todo lo que soy ahorita te lo debo a ti, que aunque se que no soy el mejor hijo, agradezco que a pesar de todo sigas siendo la persona que eres conmigo, que me sigues corrigiendo independientemente de como respondo a eso, pero tambien aunuqe no sea mucho de expresarlo  decirte que aparte de que me acompañas siendo mi ejemplo, eres mi motivacion.</p>
+        </figure>
+
+        <figure class="card">
+            <img src="img 5.jpg" alt="Imagen 3">
+            <p class="description" contenteditable="true">Gracias a ti, que con tu esfuerzo y con el de mi mama y Dios, siempre me han dado dado lo mejor, y sin duda alguna me siento el mas afortunado, por tenerlos a ustedes. Por eso, quiero decirte algo que a veces no digo suficiente: gracias. Gracias por tus consejos, por tu paciencia, por tu ejemplo y por enseñarme a ser fuerte. Eres alguien a quien admiro y respeto muchísimo.</p>
+        </figure>
+    </div>
+
+    <footer class="footer" role="contentinfo">
+        <p class="footer-text">TE QUIERO HASTA EL INFINITO Y MAS ALLÁ</p>
+    </footer>
+</body>
+</html>
