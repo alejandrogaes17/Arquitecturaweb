@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard Financiero | Empresa Digital 2022–2025</title>
+
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+
+  <style>
+    /* ─── CSS VARIABLES ─────────────────────────────────────────── */
+    :root {
+      --bg-dark:     #0b0f1a;
+      --bg-card:     #121929;
+      --bg-panel:    #0f1624;
+      --accent:      #00c8ff;
+      --accent2:     #7c5cfc;
+      --accent3:     #00e5a0;
+      --danger:      #ff4d6d;
+      --warn:        #ffb703;
+      --text-main:   #e8edf5;
+      --text-muted:  #6b7a99;
+      --border:      rgba(255,255,255,0.07);
+      --sidebar-w:   240px;
+      --font-display:'Syne', sans-serif;
+      --font-body:   'DM Sans', sans-serif;
+    }
+
+    /* ─── RESET / BASE ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--accent2); border-radius: 4px; }
+
+    /* ─── SIDEBAR ───────────────────────────────────────────────── */
+    #sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 200;
+      transition: transform .3s;
+    }
+    .sidebar-logo {
+      padding: 28px 20px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-logo h1 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--accent);
+      line-height: 1.2;
+    }
+    .sidebar-logo span { color: var(--text-muted); font-size: .72rem; font-weight: 400; }
+    .sidebar-nav { padding: 18px 10px; flex: 1; }
+    .nav-section { font-size: .65rem; text-transform: uppercase; letter-spacing: .12em;
+      color: var(--text-muted); padding: 14px 12px 6px; font-weight: 600; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px; margin-bottom: 2px;
+      cursor: pointer; transition: all .2s; font-size: .88rem; color: var(--text-muted);
+    }
+    .nav-item:hover, .nav-item.active {
+      background: rgba(0,200,255,.08); color: var(--accent);
+    }
+    .nav-item.active { border-left: 3px solid var(--accent); }
+    .nav-item i { font-size: 1rem; width: 20px; }
+    .sidebar-footer {
+      padding: 16px; border-top: 1px solid var(--border);
+      font-size: .72rem; color: var(--text-muted); text-align: center;
+    }
+
+    /* ─── MAIN CONTENT ──────────────────────────────────────────── */
+    #main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 28px 28px 60px;
+      overflow-x: hidden;
+    }
+
+    /* ─── TOP BAR ───────────────────────────────────────────────── */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .topbar h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem; font-weight: 800; letter-spacing: -.03em;
+    }
+    .topbar h2 span { color: var(--accent); }
+    .year-filter {
+      display: flex; gap: 6px;
+    }
+    .year-btn {
+      padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border);
+      background: var(--bg-card); color: var(--text-muted); font-size: .82rem;
+      cursor: pointer; transition: all .2s; font-family: var(--font-body);
+    }
+    .year-btn.active, .year-btn:hover {
+      background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600;
+    }
+    .year-btn.all-btn.active { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+
+    /* ─── SECTION VIEWS ─────────────────────────────────────────── */
+    .section-view { display: none; }
+    .section-view.active { display: block; }
+
+    /* ─── KPI CARDS ─────────────────────────────────────────────── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 16px; margin-bottom: 26px;
+    }
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,.4); }
+    .kpi-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .kpi-card.c-blue::before   { background: var(--accent); }
+    .kpi-card.c-purple::before { background: var(--accent2); }
+    .kpi-card.c-green::before  { background: var(--accent3); }
+    .kpi-card.c-red::before    { background: var(--danger); }
+    .kpi-card.c-warn::before   { background: var(--warn); }
+    .kpi-label { font-size: .72rem; color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: .08em; margin-bottom: 8px; }
+    .kpi-value { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800;
+      letter-spacing: -.02em; line-height: 1; }
+    .kpi-unit { font-size: .8rem; font-weight: 400; color: var(--text-muted); }
+    .kpi-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: .72rem; font-weight: 600; margin-top: 8px;
+      padding: 3px 8px; border-radius: 20px;
+    }
+    .badge-green { background: rgba(0,229,160,.12); color: var(--accent3); }
+    .badge-red   { background: rgba(255,77,109,.12); color: var(--danger); }
+    .badge-warn  { background: rgba(255,183,3,.12);  color: var(--warn); }
+    .badge-gray  { background: rgba(255,255,255,.06); color: var(--text-muted); }
+    .kpi-icon {
+      position: absolute; bottom: 14px; right: 16px;
+      font-size: 2.2rem; opacity: .07;
+    }
+
+    /* ─── CHARTS ────────────────────────────────────────────────── */
+    .chart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 22px 18px;
+      margin-bottom: 20px;
+    }
+    .chart-title {
+      font-family: var(--font-display);
+      font-size: 1rem; font-weight: 700; margin-bottom: 4px;
+    }
+    .chart-sub { font-size: .76rem; color: var(--text-muted); margin-bottom: 18px; }
+    .chart-wrap { position: relative; }
+
+    /* ─── RATIO TABLE ───────────────────────────────────────────── */
+    .ratio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px; margin-bottom: 20px;
+    }
+    .ratio-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 18px;
+      transition: transform .2s;
+    }
+    .ratio-card:hover { transform: translateY(-2px); }
+    .ratio-name { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em;
+      color: var(--text-muted); margin-bottom: 6px; }
+    .ratio-val { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; }
+    .ratio-formula { font-size: .68rem; color: var(--text-muted); margin-top: 4px; }
+    .semaforo {
+      display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+      margin-right: 5px;
+    }
+    .sem-green  { background: var(--accent3); box-shadow: 0 0 6px var(--accent3); }
+    .sem-yellow { background: var(--warn);    box-shadow: 0 0 6px var(--warn); }
+    .sem-red    { background: var(--danger);  box-shadow: 0 0 6px var(--danger); }
+
+    /* ─── ALERTS ────────────────────────────────────────────────── */
+    .alert-box {
+      border-radius: 12px; padding: 14px 18px; margin-bottom: 12px;
+      display: flex; align-items: flex-start; gap: 12px;
+      border: 1px solid;
+    }
+    .alert-box.info    { background: rgba(0,200,255,.06); border-color: rgba(0,200,255,.25); }
+    .alert-box.warning { background: rgba(255,183,3,.06); border-color: rgba(255,183,3,.25); }
+    .alert-box.danger  { background: rgba(255,77,109,.06); border-color: rgba(255,77,109,.25); }
+    .alert-box.success { background: rgba(0,229,160,.06); border-color: rgba(0,229,160,.25); }
+    .alert-box i { font-size: 1.2rem; margin-top: 2px; }
+    .alert-box.info i    { color: var(--accent); }
+    .alert-box.warning i { color: var(--warn); }
+    .alert-box.danger i  { color: var(--danger); }
+    .alert-box.success i { color: var(--accent3); }
+    .alert-box .alt { font-size: .82rem; }
+    .alert-box .alt strong { display: block; font-size: .88rem; margin-bottom: 2px; }
+
+    /* ─── TABLE ─────────────────────────────────────────────────── */
+    .fin-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      font-size: .84rem;
+    }
+    .fin-table th {
+      background: rgba(255,255,255,.04); padding: 10px 14px;
+      font-size: .7rem; text-transform: uppercase; letter-spacing: .08em;
+      color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);
+    }
+    .fin-table td {
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      font-variant-numeric: tabular-nums;
+    }
+    .fin-table tr:last-child td { border-bottom: none; }
+    .fin-table tr:hover td { background: rgba(255,255,255,.02); }
+    .fin-table td.num { text-align: right; font-family: var(--font-display); font-weight: 600; }
+    .fin-table td.label { color: var(--text-muted); font-size: .8rem; }
+    .fin-table tr.total td { font-weight: 700; color: var(--accent); border-top: 1px solid var(--border); }
+
+    /* ─── PROYECCIÓN ─────────────────────────────────────────────── */
+    .proj-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(124,92,252,.15); color: var(--accent2);
+      border: 1px solid rgba(124,92,252,.3); border-radius: 20px;
+      font-size: .72rem; padding: 3px 10px; margin-left: 8px;
+    }
+
+    /* ─── INTERPRETACIÓN ─────────────────────────────────────────── */
+    .interp-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 24px 26px; margin-bottom: 20px;
+    }
+    .interp-card h5 {
+      font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+      margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+    }
+    .interp-card p { font-size: .85rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 10px; }
+    .interp-card p:last-child { margin-bottom: 0; }
+    .interp-card p strong { color: var(--text-main); }
+
+    /* ─── CRECIMIENTO ────────────────────────────────────────────── */
+    .growth-bar-wrap { margin-bottom: 14px; }
+    .growth-label { display: flex; justify-content: space-between; font-size: .8rem; margin-bottom: 5px; }
+    .growth-bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,.06); overflow: hidden; }
+    .growth-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      #sidebar { transform: translateX(-100%); }
+      #sidebar.open { transform: translateX(0); }
+      #main { margin-left: 0; padding: 16px; }
+      .kpi-grid { grid-template-columns: repeat(2,1fr); }
+      .ratio-grid { grid-template-columns: repeat(2,1fr); }
+    }
+
+    /* ─── ANIMATIONS ─────────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .anim { animation: fadeUp .45s ease both; }
+    .anim-d1 { animation-delay: .05s; }
+    .anim-d2 { animation-delay: .1s; }
+    .anim-d3 { animation-delay: .15s; }
+    .anim-d4 { animation-delay: .2s; }
+    .anim-d5 { animation-delay: .25s; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════ SIDEBAR ════════════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <h1>📊 FinDash<br/>Digital</h1>
+    <span>Sistema de Información Financiera</span>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">Análisis</div>
+    <div class="nav-item active" onclick="showSection('inicio')">
+      <i class="bi bi-grid-1x2"></i> Resumen General
+    </div>
+    <div class="nav-item" onclick="showSection('situacion')">
+      <i class="bi bi-bank2"></i> Estado Situación
+    </div>
+    <div class="nav-item" onclick="showSection('resultados')">
+      <i class="bi bi-bar-chart-line"></i> Estado Resultados
+    </div>
+    <div class="nav-section">Indicadores</div>
+    <div class="nav-item" onclick="showSection('liquidez')">
+      <i class="bi bi-droplet"></i> Liquidez
+    </div>
+    <div class="nav-item" onclick="showSection('rentabilidad')">
+      <i class="bi bi-graph-up-arrow"></i> Rentabilidad
+    </div>
+    <div class="nav-item" onclick="showSection('gestion')">
+      <i class="bi bi-arrow-repeat"></i> Gestión
+    </div>
+    <div class="nav-section">Avanzado</div>
+    <div class="nav-item" onclick="showSection('proyeccion')">
+      <i class="bi bi-stars"></i> Proyecciones
+    </div>
+    <div class="nav-item" onclick="showSection('alertas')">
+      <i class="bi bi-bell"></i> Alertas
+    </div>
+    <div class="nav-item" onclick="showSection('interpretacion')">
+      <i class="bi bi-chat-text"></i> Interpretación
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    Universidad La Salle · 2025<br/>
+    Sistemas de Información Financiera
+  </div>
+</nav>
+
+<!-- ════════════════════ MAIN ════════════════════ -->
+<main id="main">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <h2>Dashboard <span>Financiero</span></h2>
+    <div class="year-filter">
+      <button class="year-btn all-btn active" onclick="filterYear('all')">Todos</button>
+      <button class="year-btn" onclick="filterYear(2022)">2022</button>
+      <button class="year-btn" onclick="filterYear(2023)">2023</button>
+      <button class="year-btn" onclick="filterYear(2024)">2024</button>
+      <button class="year-btn" onclick="filterYear(2025)">2025</button>
+    </div>
+  </div>
+
+  <!-- ═══ SECCIÓN: INICIO ═══ -->
+  <div id="sec-inicio" class="section-view active">
+    <!-- KPI CARDS -->
+    <div class="kpi-grid" id="kpi-grid"><!-- inyectado por JS --></div>
+
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="chart-card anim anim-d2">
+          <div class="chart-title">Activo · Pasivo · Capital</div>
+          <div class="chart-sub">Comparación anual 2022–2025 (miles $)</div>
+          <div class="chart-wrap"><canvas id="chartBalGeneral" height="220"></canvas></div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="chart-card anim anim-d3">
+          <div class="chart-title">Ingresos vs Utilidad Neta</div>
+          <div class="chart-sub">Tendencia 2022–2025 (miles $)</div>
+          <div class="chart-wrap"><canvas id="chartIngUtil" height="220"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEMÁFORO RÁPIDO -->
+    <div class="row g-3 mt-1" id="semaforo-rapido"><!-- inyectado por JS --></div>
+  </div>
+
+  <!-- ═══ SECCIÓN: ESTADO SITUACIÓN ═══ -->
+  <div id="sec-situacion" class="section-view">
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="chart-card">
+          <div class="chart-title">Estructura Financiera Comparativa</div>
+          <div class="chart-sub">Activo Total · Pasivo Total · Capital Contable</div>
+          <div class="chart-wrap"><canvas id="chartSituacion" height="260"></canvas></div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="chart-card">
+          <div class="chart-title">Evolución del Capital Contable</div>
+          <div class="chart-sub">Línea de tendencia 2022–2025</div>
+          <div class="chart-wrap"><canvas id="chartCapital" height="260"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Estado de Situación Financiera — Detalle</div>
+      <div class="chart-sub">Cifras en miles de pesos</div>
+      <div class="table-responsive">
+        <table class="fin-table" id="tabSituacion">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th class="text-end">2022</th>
+              <th class="text-end">2023</th>
+              <th class="text-end">2024</th>
+              <th class="text-end">2025</th>
+            </tr>
+          </thead>
+          <tbody id="tbodySituacion"><!-- inyectado JS --></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECCIÓN: ESTADO RESULTADOS ═══ -->
+  <div id="sec-resultados" class="section-view">
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="chart-card">
+          <div class="chart-title">Estado de Resultados Comparativo</div>
+          <div class="chart-sub">Ingresos · Costos · Gastos · Utilidad (miles $)</div>
+          <div class="chart-wrap"><canvas id="chartResultados" height="260"></canvas></div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="chart-card">
+          <div class="chart-title">Tendencia de Utilidad Neta</div>
+          <div class="chart-sub">Resultado del ejercicio 2022–2025</div>
+          <div class="chart-wrap"><canvas id="chartUtilidad" height="260"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Estado de Resultados — Detalle</div>
+      <div class="chart-sub">Cifras en miles de pesos</div>
+      <div class="table-responsive">
+        <table class="fin-table" id="tabResultados">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th class="text-end">2022</th>
+              <th class="text-end">2023</th>
+              <th class="text-end">2024</th>
+              <th class="text-end">2025</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyResultados"><!-- inyectado JS --></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECCIÓN: LIQUIDEZ ═══ -->
+  <div id="sec-liquidez" class="section-view">
+    <div class="ratio-grid" id="ratio-liquidez"><!-- inyectado JS --></div>
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="chart-card">
+          <div class="chart-title">Indicadores de Liquidez — Tendencia</div>
+          <div class="chart-sub">Razones de liquidez, tesorería y autonomía</div>
+          <div class="chart-wrap"><canvas id="chartLiquidez" height="260"></canvas></div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="chart-card">
+          <div class="chart-title">Capital de Trabajo Neto</div>
+          <div class="chart-sub">Evolución 2022–2025 (miles $)</div>
+          <div class="chart-wrap"><canvas id="chartCapTrabajo" height="260"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECCIÓN: RENTABILIDAD ═══ -->
+  <div id="sec-rentabilidad" class="section-view">
+    <div class="ratio-grid" id="ratio-rent"><!-- inyectado JS --></div>
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="chart-card">
+          <div class="chart-title">ROE · ROI · Margen Neto — Comparativo por Año</div>
+          <div class="chart-sub">Barras agrupadas (%) — todos los indicadores de rentabilidad</div>
+          <div class="chart-wrap"><canvas id="chartRentBarras" height="260"></canvas></div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="chart-card">
+          <div class="chart-title">Evolución de Rentabilidad (%)</div>
+          <div class="chart-sub">Líneas de tendencia ROE · ROI · Margen Neto</div>
+          <div class="chart-wrap"><canvas id="chartRentLineas" height="260"></canvas></div>
+        </div>
+      </div>
+    </div>
+    <div class="row g-4 mt-0">
+      <div class="col-lg-5">
+        <div class="chart-card">
+          <div class="chart-title">Composición de Ingresos vs Costos</div>
+          <div class="chart-sub">Distribución porcentual — año seleccionado</div>
+          <div class="chart-wrap" style="max-width:320px;margin:0 auto"><canvas id="chartPastel" height="260"></canvas></div>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="chart-card">
+          <div class="chart-title">Margen Bruto vs Margen Neto (%)</div>
+          <div class="chart-sub">Comparación anual — brecha entre ingresos y rentabilidad real</div>
+          <div class="chart-wrap"><canvas id="chartMargenes" height="260"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECCIÓN: GESTIÓN ═══ -->
+  <div id="sec-gestion" class="section-view">
+    <div class="ratio-grid" id="ratio-gestion"><!-- inyectado JS --></div>
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="chart-card">
+          <div class="chart-title">Ciclos Operativo y Financiero</div>
+          <div class="chart-sub">Días — 2022 a 2025</div>
+          <div class="chart-wrap"><canvas id="chartCiclos" height="260"></canvas></div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="chart-card">
+          <div class="chart-title">Días de Cobro · Inventario · Pago</div>
+          <div class="chart-sub">Comparativo por año</div>
+          <div class="chart-wrap"><canvas id="chartDias" height="260"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECCIÓN: PROYECCIONES ═══ -->
+  <div id="sec-proyeccion" class="section-view">
+    <div class="chart-card">
+      <div class="chart-title">
+        Proyección de Ingresos 2026–2027
+        <span class="proj-tag"><i class="bi bi-cpu"></i> Regresión Lineal</span>
+      </div>
+      <div class="chart-sub">Estimación basada en tendencia histórica 2022–2025</div>
+      <div class="chart-wrap"><canvas id="chartProyeccion" height="240"></canvas></div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="chart-card">
+          <div class="chart-title">Análisis de Crecimiento YoY</div>
+          <div class="chart-sub">% crecimiento año con año — Ingresos y Utilidad</div>
+          <div id="growthBars"><!-- inyectado JS --></div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="chart-card">
+          <div class="chart-title">Estimaciones 2026–2027</div>
+          <div class="chart-sub">Proyección de variables clave</div>
+          <div class="table-responsive mt-2">
+            <table class="fin-table" id="tabProyeccion">
+              <thead>
+                <tr>
+                  <th>Concepto</th>
+                  <th class="text-end">2026 est.</th>
+                  <th class="text-end">2027 est.</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyProyeccion"><!-- inyectado JS --></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECCIÓN: ALERTAS ═══ -->
+  <div id="sec-alertas" class="section-view">
+    <div id="alertas-container"><!-- inyectado JS --></div>
+  </div>
+
+  <!-- ═══ SECCIÓN: INTERPRETACIÓN ═══ -->
+  <div id="sec-interpretacion" class="section-view">
+    <div id="interp-container"><!-- inyectado JS --></div>
+  </div>
+
+</main>
+
+<!-- ════════════ JS: Bootstrap + Chart.js ════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   DATOS FINANCIEROS REALES — extraídos del Excel de Armando
+   Cifras en miles de pesos
+════════════════════════════════════════════════════════════════ */
+const ALL_YEARS = [2022, 2023, 2024, 2025];
+let YEARS = [...ALL_YEARS];    // años activos según filtro
+let currentYear = 'all';       // 'all' | 2022 | 2023 | 2024 | 2025
+
+// ── Balance General ──────────────────────────────────────────
+const balance = {
+  activoTotal:      [7110, 7470, 7240, 7270],
+  activoNoCirulante:[4940, 4810, 4650, 4700],
+  activoCirulante:  [ 840,  920, 1080,  970],
+  efectivo:         [ 430,  640,  510,  550],
+  cuentasCobrar:    [ 700,  800,  900,  770],
+  inventarios:      [ 900, 1100, 1000, 1050],
+  pasivoTotal:      [2270, 2330, 2105, 2020],
+  pasivoLargoPlazo: [1460, 1360, 1480, 1300],
+  pasivoCortoPlazo: [ 810,  970,  625,  720],
+  cuentasPagar:     [ 500,  550,  430,  450],
+  capitalContable:  [4840, 5140, 5135, 5250],
+  capitalSocial:    [3000, 3000, 3000, 3000],
+  reservaLegal:     [1070, 1340, 1340, 1455],
+};
+
+// ── Estado de Resultados ─────────────────────────────────────
+const resultados = {
+  ingresos:         [5050, 5180, 5400, 5980],
+  ventas:           [5000, 5100, 5300, 5900],
+  costosServicio:   [2700, 2500, 2700, 3050],
+  gastos:           [1180, 1250, 1315, 1485],
+  utilidadNeta:     [ 770,  800,  795,  795],
+  cashFlow:         [ 970, 1250, 1195, 1275],
+  gastosFinancieros:[ 200,  180,  190,  170],
+};
+
+// ── Indicadores Financieros (calculados / tomados del Excel) ─
+const ratios = {
+  // Liquidez
+  tesoreria:    [0.5309, 0.6598, 0.8160, 0.7639],
+  liquidez:     [1.5679, 1.6082, 2.5440, 2.1111],
+  autonomia:    [0.6807, 0.6881, 0.7093, 0.7221],
+  endeudamiento:[0.4690, 0.4533, 0.4099, 0.3848],
+  capTrabajo:   [ 460,    590,    965,    800],
+  // Rentabilidad
+  financiera:   [0.2004, 0.1907, 0.1918, 0.1838],
+  roe:          [0.2567, 0.2667, 0.2650, 0.2650],
+  roi:          [0.1083, 0.1071, 0.1098, 0.1094],
+  rentVentas:   [0.1540, 0.1569, 0.1500, 0.1347],
+  margenVentas: [0.4653, 0.5174, 0.5000, 0.4900],
+  // Gestión (días)
+  diasInventario:   [121.67, 160.60, 135.19, 125.66],
+  diasCxP:          [ 70.19,  74.35,  60.37,  52.98],
+  diasCxC:          [ 51.10,  57.25,  61.98,  47.64],
+  rotTesoreria:     [ 60.37,  86.52,  71.60,  64.76],
+  cicloOperativo:   [172.77, 217.85, 197.17, 173.29],
+  cicloFinanciero:  [102.57, 143.50, 136.80, 120.31],
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILIDADES GENERALES
+════════════════════════════════════════════════════════════════ */
+const fmt  = v => Number(v).toLocaleString('es-MX');
+const sign = v => v >= 0 ? '+' : '';
+
+// Semáforo: retorna clase según umbral (verde / amarillo / rojo)
+function semaforo(val, gMin, yMin) {
+  if (val >= gMin) return 'sem-green';
+  if (val >= yMin) return 'sem-yellow';
+  return 'sem-red';
+}
+
+// Devuelve slice de un array según el año seleccionado
+function slice(arr) {
+  if (currentYear === 'all') return [...arr];
+  const i = ALL_YEARS.indexOf(+currentYear);
+  return i >= 0 ? [arr[i]] : [...arr];
+}
+// Índice activo (último visible)
+function activeIdx() {
+  if (currentYear === 'all') return ALL_YEARS.length - 1;
+  const i = ALL_YEARS.indexOf(+currentYear);
+  return i >= 0 ? i : ALL_YEARS.length - 1;
+}
+// Índice previo para comparación YoY
+function prevIdx() {
+  const i = activeIdx();
+  return i > 0 ? i - 1 : 0;
+}
+
+// Regresión lineal simple (siempre sobre datos completos)
+function linearRegression(arr) {
+  const y = [...arr];
+  const n = y.length;
+  const x = y.map((_, i) => i);
+  const mx = x.reduce((a,b)=>a+b,0)/n;
+  const my = y.reduce((a,b)=>a+b,0)/n;
+  const num = x.reduce((s,xi,i)=>s+(xi-mx)*(y[i]-my),0);
+  const den = x.reduce((s,xi)=>s+(xi-mx)**2,0);
+  const m = num/den;
+  const b = my - m*mx;
+  return { m, b, predict: xi => m*xi + b };
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CHART.JS — CONFIG GLOBAL
+════════════════════════════════════════════════════════════════ */
+Chart.defaults.color = '#6b7a99';
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.plugins.legend.labels.boxWidth = 12;
+Chart.defaults.plugins.legend.labels.padding = 16;
+
+const PALETTE = {
+  blue:   '#00c8ff',
+  purple: '#7c5cfc',
+  green:  '#00e5a0',
+  red:    '#ff4d6d',
+  warn:   '#ffb703',
+  pink:   '#ff6eb4',
+  teal:   '#00d4c8',
+};
+
+function mkChart(id, config) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  if (ctx._chart) ctx._chart.destroy();
+  const c = new Chart(ctx, config);
+  ctx._chart = c;
+  return c;
+}
+
+const gridOpts = {
+  color: 'rgba(255,255,255,0.05)',
+};
+const tickOpts = { color: '#6b7a99', font: { size: 11 } };
+
+/* ═══════════════════════════════════════════════════════════════
+   FILTRO POR AÑO — reconstruye TODA la UI activa
+════════════════════════════════════════════════════════════════ */
+function filterYear(y) {
+  currentYear = y;
+  // Actualizar YEARS slice para etiquetas
+  YEARS = y === 'all' ? [...ALL_YEARS] : [+y];
+
+  document.querySelectorAll('.year-btn').forEach(b=>b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+
+  // Re-renderizar todo
+  renderKPIs();
+  renderSemaforo();
+  buildChartInicio();
+  buildChartSituacion();
+  buildChartResultados();
+  buildLiquidez();
+  buildRentabilidad();
+  buildGestion();
+  buildProyeccion();
+  buildAlertas();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECCIÓN: INICIO — KPI CARDS
+════════════════════════════════════════════════════════════════ */
+function renderKPIs() {
+  const i    = activeIdx();
+  const prev = prevIdx();
+  const label = currentYear === 'all' ? '2022–2025' : String(currentYear);
+
+  const activo   = balance.activoTotal[i];
+  const pasivo   = balance.pasivoTotal[i];
+  const capital  = balance.capitalContable[i];
+  const ingresos = resultados.ingresos[i];
+  const utilidad = resultados.utilidadNeta[i];
+  const margen   = (utilidad/resultados.ventas[i]*100).toFixed(1);
+  const roe      = (ratios.roe[i]*100).toFixed(1);
+  const liq      = ratios.liquidez[i].toFixed(2);
+
+  const dIng  = i > 0 ? ((ingresos - resultados.ingresos[prev])/resultados.ingresos[prev]*100).toFixed(1) : null;
+  const dUtil = i > 0 ? ((utilidad - resultados.utilidadNeta[prev])/resultados.utilidadNeta[prev]*100).toFixed(1) : null;
+
+  const kpis = [
+    { label:'Activo Total',    val:`$${fmt(activo)}`,   unit:'miles', badge:null, icon:'bi-building', cls:'c-blue' },
+    { label:'Pasivo Total',    val:`$${fmt(pasivo)}`,   unit:'miles', badge:null, icon:'bi-exclamation-circle', cls:'c-red' },
+    { label:'Capital Contable',val:`$${fmt(capital)}`,  unit:'miles', badge:null, icon:'bi-briefcase', cls:'c-green' },
+    { label:'Ingresos',        val:`$${fmt(ingresos)}`, unit:'miles',
+      badge: dIng ? { txt:`${sign(dIng)}${dIng}% vs ant`, cls: +dIng>=0?'badge-green':'badge-red' } : {txt:'Base',cls:'badge-gray'},
+      icon:'bi-cash-coin', cls:'c-blue' },
+    { label:'Utilidad Neta',   val:`$${fmt(utilidad)}`, unit:'miles',
+      badge: dUtil ? { txt:`${sign(dUtil)}${dUtil}% vs ant`, cls: +dUtil>=0?'badge-green':'badge-red' } : {txt:'Base',cls:'badge-gray'},
+      icon:'bi-graph-up', cls:'c-green' },
+    { label:'Margen Neto',     val:`${margen}%`, unit:'sobre ventas',
+      badge:{ txt: +margen>=15?'✓ Saludable':+margen>=10?'⚠ Riesgo':'✗ Crítico',
+              cls: +margen>=15?'badge-green':+margen>=10?'badge-warn':'badge-red' },
+      icon:'bi-percent', cls:'c-purple' },
+    { label:'ROE',             val:`${roe}%`, unit:'rent. capital',
+      badge:{ txt: +roe>=20?'✓ Excelente':'⚠ Revisar', cls: +roe>=20?'badge-green':'badge-warn' },
+      icon:'bi-award', cls:'c-warn' },
+    { label:'Razón Liquidez',  val:liq, unit:'veces',
+      badge:{ txt: +liq>=1.5?'✓ Saludable':+liq>=1?'⚠ Riesgo':'✗ Crítico',
+              cls: +liq>=1.5?'badge-green':+liq>=1?'badge-warn':'badge-red' },
+      icon:'bi-droplet-fill', cls:'c-green' },
+  ];
+
+  document.getElementById('kpi-grid').innerHTML = kpis.map((k,j)=>`
+    <div class="kpi-card ${k.cls} anim" style="animation-delay:${j*.04}s">
+      <div class="kpi-label">${k.label} <span style="color:var(--accent);font-size:.68rem">${label}</span></div>
+      <div class="kpi-value">${k.val} <span class="kpi-unit">${k.unit}</span></div>
+      ${k.badge ? `<span class="kpi-badge ${k.badge.cls}">${k.badge.txt}</span>` : ''}
+      <i class="bi ${k.icon} kpi-icon"></i>
+    </div>`).join('');
+}
+
+/* ─── Semáforo rápido ─────────────────────────────────────── */
+function renderSemaforo() {
+  const i = activeIdx();
+  const items = [
+    { name:'Liquidez (>1.5)',     val:ratios.liquidez[i].toFixed(2),              gMin:1.5,  yMin:1.0 },
+    { name:'Autonomía (>0.5)',    val:ratios.autonomia[i].toFixed(3),             gMin:0.5,  yMin:0.35 },
+    { name:'Endeudamiento (<0.5)',val:ratios.endeudamiento[i].toFixed(3),         gMin:0.999,yMin:0.5, invert:true },
+    { name:'ROI (>10%)',          val:(ratios.roi[i]*100).toFixed(1)+'%',         gMin:10,   yMin:7 },
+    { name:'ROE (>20%)',          val:(ratios.roe[i]*100).toFixed(1)+'%',         gMin:20,   yMin:15 },
+    { name:'Margen Neto (>15%)',  val:(ratios.rentVentas[i]*100).toFixed(1)+'%', gMin:15,   yMin:10 },
+  ];
+  document.getElementById('semaforo-rapido').innerHTML = items.map(it => {
+    const raw = parseFloat(it.val);
+    let sem, bg;
+    if (it.invert) {
+      sem = raw < it.yMin ? 'sem-green' : raw < it.gMin ? 'sem-yellow' : 'sem-red';
+      bg  = raw < it.yMin ? '#00e5a0'   : raw < it.gMin ? '#ffb703'    : '#ff4d6d';
+    } else {
+      sem = raw >= it.gMin ? 'sem-green' : raw >= it.yMin ? 'sem-yellow' : 'sem-red';
+      bg  = raw >= it.gMin ? '#00e5a0'   : raw >= it.yMin ? '#ffb703'    : '#ff4d6d';
+    }
+    return `<div class="col-sm-6 col-md-4 col-lg-2">
+      <div class="kpi-card" style="border-top:3px solid ${bg}">
+        <div class="kpi-label" style="font-size:.68rem">${it.name}</div>
+        <div class="kpi-value" style="font-size:1.4rem">${it.val}</div>
+        <span class="semaforo ${sem}"></span>
+        <span style="font-size:.72rem;color:var(--text-muted)">${sem==='sem-green'?'Óptimo':sem==='sem-yellow'?'Riesgo':'Crítico'}</span>
+      </div></div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GRÁFICAS: INICIO
+════════════════════════════════════════════════════════════════ */
+function buildChartInicio() {
+  const labels = slice(ALL_YEARS);
+  mkChart('chartBalGeneral', {
+    type: labels.length === 1 ? 'bar' : 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label:'Activo Total',    data:slice(balance.activoTotal),    backgroundColor:'rgba(0,200,255,.75)', borderRadius:6 },
+        { label:'Pasivo Total',    data:slice(balance.pasivoTotal),    backgroundColor:'rgba(255,77,109,.75)', borderRadius:6 },
+        { label:'Capital Contable',data:slice(balance.capitalContable),backgroundColor:'rgba(0,229,160,.75)', borderRadius:6 },
+      ]
+    },
+    options:{ responsive:true,
+      plugins:{ legend:{position:'top'}, tooltip:{callbacks:{label:c=>`$${fmt(c.raw)} miles`}} },
+      scales:{ x:{ticks:tickOpts,grid:gridOpts}, y:{ticks:tickOpts,grid:gridOpts} } }
+  });
+
+  mkChart('chartIngUtil', {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        { label:'Ingresos',      data:slice(resultados.ingresos),    borderColor:PALETTE.blue,  backgroundColor:'rgba(0,200,255,.08)', tension:.4, fill:true, pointBackgroundColor:PALETTE.blue,  pointRadius:6 },
+        { label:'Utilidad Neta', data:slice(resultados.utilidadNeta),borderColor:PALETTE.green, backgroundColor:'rgba(0,229,160,.08)', tension:.4, fill:true, pointBackgroundColor:PALETTE.green, pointRadius:6 },
+      ]
+    },
+    options:{ responsive:true,
+      plugins:{ legend:{position:'top'}, tooltip:{callbacks:{label:c=>`$${fmt(c.raw)} miles`}} },
+      scales:{ x:{ticks:tickOpts,grid:gridOpts}, y:{ticks:tickOpts,grid:gridOpts} } }
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GRÁFICAS: SITUACIÓN
+════════════════════════════════════════════════════════════════ */
+function buildChartSituacion() {
+  const labels = slice(ALL_YEARS);
+  mkChart('chartSituacion', {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'Activo Total',    data:slice(balance.activoTotal),    backgroundColor:'rgba(0,200,255,.75)', borderRadius:6},
+        {label:'Pasivo Total',    data:slice(balance.pasivoTotal),    backgroundColor:'rgba(255,77,109,.75)', borderRadius:6},
+        {label:'Capital Contable',data:slice(balance.capitalContable),backgroundColor:'rgba(0,229,160,.75)', borderRadius:6},
+      ]
+    },
+    options:{ responsive:true, plugins:{legend:{position:'top'}, tooltip:{callbacks:{label:c=>`$${fmt(c.raw)} miles`}}},
+      scales:{ x:{ticks:tickOpts,grid:gridOpts}, y:{ticks:tickOpts,grid:gridOpts} } }
+  });
+
+  mkChart('chartCapital', {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Capital Contable',data:slice(balance.capitalContable),borderColor:PALETTE.green, backgroundColor:'rgba(0,229,160,.1)',fill:true,tension:.4,pointBackgroundColor:PALETTE.green, pointRadius:6},
+        {label:'Capital Social',  data:slice(balance.capitalSocial),  borderColor:PALETTE.purple,borderDash:[6,3],tension:.4,pointBackgroundColor:PALETTE.purple,pointRadius:4},
+      ]
+    },
+    options:{ responsive:true, plugins:{legend:{position:'top'}},
+      scales:{ x:{ticks:tickOpts,grid:gridOpts}, y:{ticks:tickOpts,grid:gridOpts} } }
+  });
+
+  // Tabla detalle — siempre muestra columnas según YEARS activos
+  const activeYears = slice(ALL_YEARS);
+  const activeIdxs  = activeYears.map(y => ALL_YEARS.indexOf(y));
+  const rows = [
+    { label:'ACTIVO TOTAL',                cls:'total', src:balance.activoTotal },
+    { label:'Activo No Circulante',        cls:'',      src:balance.activoNoCirulante },
+    { label:'Activo Circulante',           cls:'',      src:balance.activoCirulante },
+    { label:'↳ Cuentas por Cobrar',        cls:'label', src:balance.cuentasCobrar },
+    { label:'↳ Inventarios',              cls:'label', src:balance.inventarios },
+    { label:'↳ Efectivo y Equivalentes',  cls:'label', src:balance.efectivo },
+    { label:'PASIVO TOTAL',               cls:'total', src:balance.pasivoTotal },
+    { label:'Pasivo a Largo Plazo',        cls:'',      src:balance.pasivoLargoPlazo },
+    { label:'Pasivo a Corto Plazo',        cls:'',      src:balance.pasivoCortoPlazo },
+    { label:'↳ Cuentas por Pagar',        cls:'label', src:balance.cuentasPagar },
+    { label:'CAPITAL CONTABLE',           cls:'total', src:balance.capitalContable },
+    { label:'Capital Social',             cls:'',      src:balance.capitalSocial },
+    { label:'↳ Reserva Legal',            cls:'label', src:balance.reservaLegal },
+  ];
+  // Encabezado dinámico
+  document.querySelector('#tabSituacion thead tr').innerHTML =
+    `<th>Concepto</th>${activeYears.map(y=>`<th class="text-end">${y}</th>`).join('')}`;
+  document.getElementById('tbodySituacion').innerHTML = rows.map(r=>`
+    <tr class="${r.cls}">
+      <td class="${r.cls==='label'?'label':''}" style="padding-left:${r.cls==='label'?'28px':'14px'}">${r.label}</td>
+      ${activeIdxs.map(i=>`<td class="num">$${fmt(r.src[i])}</td>`).join('')}
+    </tr>`).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GRÁFICAS: RESULTADOS
+════════════════════════════════════════════════════════════════ */
+function buildChartResultados() {
+  const labels = slice(ALL_YEARS);
+  const activeIdxs = labels.map(y => ALL_YEARS.indexOf(y));
+
+  mkChart('chartResultados', {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'Ingresos',       data:slice(resultados.ingresos),       backgroundColor:'rgba(0,200,255,.75)', borderRadius:6},
+        {label:'Costos Servicio',data:slice(resultados.costosServicio),  backgroundColor:'rgba(255,77,109,.75)', borderRadius:6},
+        {label:'Gastos Operat.', data:slice(resultados.gastos),          backgroundColor:'rgba(255,183,3,.75)',  borderRadius:6},
+        {label:'Utilidad Neta',  data:slice(resultados.utilidadNeta),    backgroundColor:'rgba(0,229,160,.85)', borderRadius:6},
+      ]
+    },
+    options:{ responsive:true, plugins:{legend:{position:'top'}, tooltip:{callbacks:{label:c=>`$${fmt(c.raw)} miles`}}},
+      scales:{ x:{ticks:tickOpts,grid:gridOpts}, y:{ticks:tickOpts,grid:gridOpts} } }
+  });
+
+  mkChart('chartUtilidad', {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Utilidad Neta',data:slice(resultados.utilidadNeta),borderColor:PALETTE.green,backgroundColor:'rgba(0,229,160,.15)',fill:true,tension:.4,pointBackgroundColor:PALETTE.green,pointRadius:6},
+        {label:'Cash Flow',    data:slice(resultados.cashFlow),    borderColor:PALETTE.blue, borderDash:[5,3],tension:.4,pointBackgroundColor:PALETTE.blue,pointRadius:4},
+      ]
+    },
+    options:{ responsive:true, plugins:{legend:{position:'top'}},
+      scales:{ x:{ticks:tickOpts,grid:gridOpts}, y:{ticks:tickOpts,grid:gridOpts} } }
+  });
+
+  // Tabla resultados dinámica
+  const rows = [
+    {label:'INGRESOS TOTALES',     cls:'total', src:resultados.ingresos},
+    {label:'Ventas por Servicios', cls:'',      src:resultados.ventas},
+    {label:'COSTOS DEL SERVICIO',  cls:'total', src:resultados.costosServicio},
+    {label:'GASTOS OPERATIVOS',    cls:'total', src:resultados.gastos},
+    {label:'↳ Gastos Financieros', cls:'label', src:resultados.gastosFinancieros},
+    {label:'RESULTADO NETO',       cls:'total', src:resultados.utilidadNeta},
+    {label:'Cash Flow',            cls:'',      src:resultados.cashFlow},
+  ];
+  // encabezado dinámico
+  document.querySelector('#tabResultados thead tr').innerHTML =
+    `<th>Concepto</th>${labels.map(y=>`<th class="text-end">${y}</th>`).join('')}`;
+  document.getElementById('tbodyResultados').innerHTML = rows.map(r=>`
+    <tr class="${r.cls}">
+      <td class="${r.cls==='label'?'label':''}" style="padding-left:${r.cls==='label'?'28px':'14px'}">${r.label}</td>
+      ${activeIdxs.map(i=>`<td class="num">$${fmt(r.src[i])}</td>`).join('')}
+    </tr>`).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECCIÓN: LIQUIDEZ
+════════════════════════════════════════════════════════════════ */
+function buildLiquidez() {
+  const i      = activeIdx();
+  const labels = slice(ALL_YEARS);
+  const yearLbl= currentYear === 'all' ? '2025 (último)' : String(currentYear);
+
+  const rLiq = [
+    { name:'Razón de Liquidez',    val:ratios.liquidez[i].toFixed(4),              form:'(A.Circ + Efectivo) / P.Corto', gMin:1.5, yMin:1.0 },
+    { name:'Razón de Tesorería',   val:ratios.tesoreria[i].toFixed(4),             form:'Efectivo / P.Corto Plazo',      gMin:0.5, yMin:0.2 },
+    { name:'Autonomía Financiera', val:(ratios.autonomia[i]*100).toFixed(2)+'%',   form:'Capital Contable / Activo Total',gMin:60, yMin:40 },
+    { name:'Endeudamiento',        val:(ratios.endeudamiento[i]*100).toFixed(2)+'%',form:'Pasivo Total / Capital Propio',gMin:0, yMin:50, invert:true },
+    { name:'Capital de Trabajo',   val:`$${fmt(ratios.capTrabajo[i])}`,            form:'A.Circ + Efectivo − P.Corto',  gMin:500, yMin:200 },
+  ];
+
+  document.getElementById('ratio-liquidez').innerHTML = `
+    <div class="ratio-card" style="grid-column:1/-1;background:rgba(0,200,255,.04);border-color:rgba(0,200,255,.2)">
+      <div class="ratio-name" style="font-size:.78rem;color:var(--accent)">📅 Mostrando datos: <strong>${yearLbl}</strong></div>
+    </div>
+    ` + rLiq.map(r=>{
+    const raw = parseFloat(r.val);
+    const sem = r.invert
+      ? (raw<40?'sem-green':raw<50?'sem-yellow':'sem-red')
+      : semaforo(raw, r.gMin, r.yMin);
+    return `<div class="ratio-card">
+      <div class="ratio-name"><span class="semaforo ${sem}"></span>${r.name}</div>
+      <div class="ratio-val" style="color:${sem==='sem-green'?'var(--accent3)':sem==='sem-yellow'?'var(--warn)':'var(--danger)'}">${r.val}</div>
+      <div class="ratio-formula">${r.form}</div>
+    </div>`;
+  }).join('');
+
+  mkChart('chartLiquidez', {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Liquidez',     data:slice(ratios.liquidez),     borderColor:PALETTE.blue,  tension:.4,pointRadius:5,pointBackgroundColor:PALETTE.blue},
+        {label:'Tesorería',    data:slice(ratios.tesoreria),    borderColor:PALETTE.green, tension:.4,pointRadius:5,pointBackgroundColor:PALETTE.green},
+        {label:'Autonomía',    data:slice(ratios.autonomia),    borderColor:PALETTE.purple,tension:.4,pointRadius:5,pointBackgroundColor:PALETTE.purple},
+        {label:'Endeudamiento',data:slice(ratios.endeudamiento),borderColor:PALETTE.red,   borderDash:[5,3],tension:.4,pointRadius:4},
+      ]
+    },
+    options:{ responsive:true, plugins:{legend:{position:'top'}},
+      scales:{ x:{ticks:tickOpts,grid:gridOpts}, y:{ticks:tickOpts,grid:gridOpts} } }
+  });
+
+  mkChart('chartCapTrabajo', {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{label:'Capital de Trabajo Neto',
+        data:slice(ratios.capTrabajo),
+        backgroundColor:slice(ratios.capTrabajo).map(v=>v>=500?'rgba(0,229,160,.8)':'rgba(255,183,3,.8)'),
+        borderRadius:6}]
+    },
+    options:{ responsive:true, plugins:{legend:{position:'top'}, tooltip:{callbacks:{label:c=>`$${fmt(c.raw)} miles`}}},
+      scales:{ x:{ticks:tickOpts,grid:gridOpts}, y:{ticks:tickOpts,grid:gridOpts} } }
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECCIÓN: RENTABILIDAD — 4 gráficas claras
+════════════════════════════════════════════════════════════════ */
+function buildRentabilidad() {
+  const i      = activeIdx();
+  const labels = slice(ALL_YEARS);
+  const yearLbl= currentYear === 'all' ? '2025 (último)' : String(currentYear);
+
+  // ── Tarjetas de ratios ──────────────────────────────────────
+  const rRent = [
+    { name:'ROE — Rent. Capital',    val:(ratios.roe[i]*100).toFixed(2)+'%',          form:'Utilidad / Capital Social',    gMin:20, yMin:15 },
+    { name:'ROI — Rent. Activos',    val:(ratios.roi[i]*100).toFixed(4)+'%',          form:'Utilidad / Activos Totales',   gMin:10, yMin:7  },
+    { name:'Margen Neto',            val:(ratios.rentVentas[i]*100).toFixed(4)+'%',   form:'Utilidad × 100 / Ventas',      gMin:15, yMin:10 },
+    { name:'Rent. Financiera',       val:(ratios.financiera[i]*100).toFixed(4)+'%',   form:'(Util+G.Fin) / Capital',       gMin:15, yMin:10 },
+    { name:'Rec. Aportados y Gan.',  val:(ratios.roe[i]*100).toFixed(4)+'%',          form:'Resultado Neto / Capital',     gMin:15, yMin:10 },
+    { name:'Margen s/Ventas',        val:(ratios.margenVentas[i]*100).toFixed(2)+'%', form:'Margen Bruto × 100 / Ventas',  gMin:45, yMin:35 },
+  ];
+  document.getElementById('ratio-rent').innerHTML =
+    `<div class="ratio-card" style="grid-column:1/-1;background:rgba(0,229,160,.04);border-color:rgba(0,229,160,.2)">
+       <div class="ratio-name" style="font-size:.78rem;color:var(--accent3)">📅 Mostrando datos: <strong>${yearLbl}</strong></div>
+     </div>` +
+    rRent.map(r => {
+      const raw = parseFloat(r.val);
+      const sem = semaforo(raw, r.gMin, r.yMin);
+      const col = sem==='sem-green'?'var(--accent3)':sem==='sem-yellow'?'var(--warn)':'var(--danger)';
+      return `<div class="ratio-card">
+        <div class="ratio-name"><span class="semaforo ${sem}"></span>${r.name}</div>
+        <div class="ratio-val" style="color:${col}">${r.val}</div>
+        <div class="ratio-formula">${r.form}</div>
+      </div>`;
+    }).join('');
+
+  // ── GRÁFICA 1: Barras agrupadas ROE / ROI / Margen Neto ────
+  /*
+   * Muestra los 3 indicadores clave lado a lado por año.
+   * Permite comparar de un vistazo cuál año fue más rentable
+   * y la proporción relativa entre los indicadores.
+   */
+  mkChart('chartRentBarras', {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'ROE (%)',
+          data: slice(ratios.roe).map(v => +(v*100).toFixed(2)),
+          backgroundColor: 'rgba(124,92,252,.8)',
+          borderColor: PALETTE.purple,
+          borderWidth: 1,
+          borderRadius: 6,
+        },
+        {
+          label: 'ROI (%)',
+          data: slice(ratios.roi).map(v => +(v*100).toFixed(2)),
+          backgroundColor: 'rgba(0,200,255,.8)',
+          borderColor: PALETTE.blue,
+          borderWidth: 1,
+          borderRadius: 6,
+        },
+        {
+          label: 'Margen Neto (%)',
+          data: slice(ratios.rentVentas).map(v => +(v*100).toFixed(2)),
+          backgroundColor: 'rgba(0,229,160,.8)',
+          borderColor: PALETTE.green,
+          borderWidth: 1,
+          borderRadius: 6,
+        },
+        {
+          label: 'Rent. Financiera (%)',
+          data: slice(ratios.financiera).map(v => +(v*100).toFixed(2)),
+          backgroundColor: 'rgba(255,183,3,.8)',
+          borderColor: PALETTE.warn,
+          borderWidth: 1,
+          borderRadius: 6,
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.raw}%` } }
+      },
+      scales: {
+        x: { ticks: tickOpts, grid: gridOpts },
+        y: {
+          ticks: { ...tickOpts, callback: v => v + '%' },
+          grid: gridOpts,
+          // Líneas de referencia visual (benchmark 10% y 20%)
+          afterDataLimits: scale => { scale.max = Math.max(scale.max, 35); }
+        }
+      },
+      // Anotación manual de benchmark (sin plugin extra)
+    }
+  });
+
+  // ── GRÁFICA 2: Líneas de tendencia ─────────────────────────
+  /*
+   * Muestra la evolución temporal de cada indicador.
+   * Ideal para detectar si la rentabilidad mejora o se deteriora.
+   * Usa fill entre ROE y Margen Neto para mostrar la brecha.
+   */
+  mkChart('chartRentLineas', {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'ROE (%)',
+          data: slice(ratios.roe).map(v => +(v*100).toFixed(2)),
+          borderColor: PALETTE.purple,
+          backgroundColor: 'rgba(124,92,252,.12)',
+          tension: .4, fill: false,
+          pointBackgroundColor: PALETTE.purple,
+          pointRadius: 6, pointHoverRadius: 9,
+        },
+        {
+          label: 'ROI (%)',
+          data: slice(ratios.roi).map(v => +(v*100).toFixed(2)),
+          borderColor: PALETTE.blue,
+          backgroundColor: 'rgba(0,200,255,.08)',
+          tension: .4, fill: false,
+          pointBackgroundColor: PALETTE.blue,
+          pointRadius: 6, pointHoverRadius: 9,
+        },
+        {
+          label: 'Margen Neto (%)',
+          data: slice(ratios.rentVentas).map(v => +(v*100).toFixed(2)),
+          borderColor: PALETTE.green,
+          backgroundColor: 'rgba(0,229,160,.1)',
+          tension: .4, fill: true,
+          pointBackgroundColor: PALETTE.green,
+          pointRadius: 6, pointHoverRadius: 9,
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${c.raw}%` } }
+      },
+      scales: {
+        x: { ticks: tickOpts, grid: gridOpts },
+        y: { ticks: { ...tickOpts, callback: v => v+'%' }, grid: gridOpts }
+      }
+    }
+  });
+
+  // ── GRÁFICA 3: Pastel — composición Ingresos año activo ────
+  /*
+   * Muestra visualmente cómo se distribuyen los ingresos entre
+   * Costos, Gastos Operativos, Gastos Financieros y Utilidad Neta.
+   * Responde: "¿De cada peso ingresado, cuánto queda de utilidad?"
+   */
+  const costos   = resultados.costosServicio[i];
+  const gastos   = resultados.gastos[i];
+  const gFin     = resultados.gastosFinancieros[i];
+  const utilidad = resultados.utilidadNeta[i];
+  const otrosGastos = resultados.ingresos[i] - costos - gastos - gFin - utilidad;
+
+  mkChart('chartPastel', {
+    type: 'doughnut',
+    data: {
+      labels: ['Costos Servicio', 'Gastos Operativos', 'Gastos Financieros', 'Utilidad Neta', 'Otros'],
+      datasets: [{
+        data: [costos, gastos, gFin, utilidad, Math.max(0, otrosGastos)],
+        backgroundColor: [
+          'rgba(255,77,109,.85)',
+          'rgba(255,183,3,.85)',
+          'rgba(124,92,252,.85)',
+          'rgba(0,229,160,.9)',
+          'rgba(107,122,153,.5)',
+        ],
+        borderColor: '#121929',
+        borderWidth: 3,
+        hoverOffset: 10,
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '62%',
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 14, font: { size: 11 } } },
+        tooltip: { callbacks: {
+          label: c => {
+            const total = c.dataset.data.reduce((a,b)=>a+b,0);
+            const pct   = ((c.raw/total)*100).toFixed(1);
+            return ` ${c.label}: $${fmt(c.raw)} (${pct}%)`;
+          }
+        }}
+      }
+    }
+  });
+
+  // ── GRÁFICA 4: Barras apiladas Margen Bruto vs Margen Neto ─
+  /*
+   * Compara el margen bruto (ingresos - costos) con el margen neto real.
+   * La diferencia visible entre ambas barras representa la carga de
+   * gastos operativos y financieros, mostrando la "eficiencia" de gasto.
+   */
+  const margenBruto = slice(ALL_YEARS).map((_, j) => {
+    const idx2 = ALL_YEARS.indexOf(slice(ALL_YEARS)[j]);
+    return +((( resultados.ingresos[idx2] - resultados.costosServicio[idx2]) / resultados.ingresos[idx2]) * 100).toFixed(2);
+  });
+  const margenNeto = slice(ratios.rentVentas).map(v => +(v*100).toFixed(2));
+  const brecha     = margenBruto.map((b, j) => +(b - margenNeto[j]).toFixed(2));
+
+  mkChart('chartMargenes', {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Margen Neto (%)',
+          data: margenNeto,
+          backgroundColor: 'rgba(0,229,160,.85)',
+          borderColor: PALETTE.green,
+          borderWidth: 1,
+          borderRadius: { topLeft:6, topRight:6 },
+          stack: 'margenes',
+        },
+        {
+          label: 'Carga Gastos y Costos (%)',
+          data: brecha,
+          backgroundColor: 'rgba(255,77,109,.45)',
+          borderColor: 'rgba(255,77,109,.7)',
+          borderWidth: 1,
+          borderRadius: { topLeft:6, topRight:6 },
+          stack: 'margenes',
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: {
+          callbacks: {
+            afterBody: items => {
+              const total = items.reduce((s,c)=>s+c.raw,0);
+              return [`Margen Bruto total: ${total.toFixed(2)}%`];
+            },
+            label: c => ` ${c.dataset.label}: ${c.raw}%`
+          }
+        }
+      },
+      scales: {
+        x: { stacked: true, ticks: tickOpts, grid: gridOpts },
+        y: { stacked: true, ticks: { ...tickOpts, callback: v => v+'%' }, grid: gridOpts,
+             afterDataLimits: s => { s.max = Math.max(s.max, 60); } }
+      }
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECCIÓN: GESTIÓN
+════════════════════════════════════════════════════════════════ */
+function buildGestion() {
+  const i      = activeIdx();
+  const labels = slice(ALL_YEARS);
+  const yearLbl= currentYear === 'all' ? '2025 (último)' : String(currentYear);
+
+  const rGest = [
+    { name:'Días Inventario',     val:ratios.diasInventario[i].toFixed(2)+' d', form:'365 × Existencias / Costo Serv.',   color:PALETTE.blue },
+    { name:'Días CxC',            val:ratios.diasCxC[i].toFixed(2)+' d',        form:'365 × Clientes / Ventas',           color:PALETTE.green },
+    { name:'Días CxP',            val:ratios.diasCxP[i].toFixed(2)+' d',        form:'365 × Proveedores / G.Servicios',   color:PALETTE.purple },
+    { name:'Ciclo Operativo',     val:ratios.cicloOperativo[i].toFixed(2)+' d', form:'Días Inv + Días CxC',               color:PALETTE.warn },
+    { name:'Ciclo Financiero',    val:ratios.cicloFinanciero[i].toFixed(2)+' d',form:'Ciclo Op. − Días CxP',              color:PALETTE.red },
+    { name:'Rot. Tesorería',      val:ratios.rotTesoreria[i].toFixed(2)+' d',   form:'365 × Efectivo / Compras',          color:PALETTE.teal },
+  ];
+
+  document.getElementById('ratio-gestion').innerHTML = `
+    <div class="ratio-card" style="grid-column:1/-1;background:rgba(255,183,3,.04);border-color:rgba(255,183,3,.2)">
+      <div class="ratio-name" style="font-size:.78rem;color:var(--warn)">📅 Mostrando datos: <strong>${yearLbl}</strong></div>
+    </div>
+    ` + rGest.map(r=>`
+    <div class="ratio-card" style="border-top:3px solid ${r.color}">
+      <div class="ratio-name">${r.name}</div>
+      <div class="ratio-val" style="color:${r.color}">${r.val}</div>
+      <div class="ratio-formula">${r.form}</div>
+    </div>`).join('');
+
+  mkChart('chartCiclos', {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Ciclo Operativo', data:slice(ratios.cicloOperativo), borderColor:PALETTE.warn, backgroundColor:'rgba(255,183,3,.1)',fill:true,tension:.4,pointRadius:5,pointBackgroundColor:PALETTE.warn},
+        {label:'Ciclo Financiero',data:slice(ratios.cicloFinanciero),borderColor:PALETTE.red,  borderDash:[5,3],tension:.4,pointRadius:4,pointBackgroundColor:PALETTE.red},
+      ]
+    },
+    options:{ responsive:true, plugins:{legend:{position:'top'}, tooltip:{callbacks:{label:c=>`${c.raw.toFixed(2)} días`}}},
+      scales:{ x:{ticks:tickOpts,grid:gridOpts}, y:{ticks:{...tickOpts,callback:v=>v+' d'},grid:gridOpts} } }
+  });
+
+  mkChart('chartDias', {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'Días Inventario',data:slice(ratios.diasInventario),backgroundColor:'rgba(0,200,255,.75)', borderRadius:4},
+        {label:'Días CxC',       data:slice(ratios.diasCxC),       backgroundColor:'rgba(0,229,160,.75)', borderRadius:4},
+        {label:'Días CxP',       data:slice(ratios.diasCxP),       backgroundColor:'rgba(124,92,252,.75)',borderRadius:4},
+      ]
+    },
+    options:{ responsive:true, plugins:{legend:{position:'top'}, tooltip:{callbacks:{label:c=>`${c.raw.toFixed(2)} días`}}},
+      scales:{ x:{ticks:tickOpts,grid:gridOpts}, y:{ticks:{...tickOpts,callback:v=>v+' d'},grid:gridOpts} } }
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECCIÓN: PROYECCIONES (Regresión Lineal — siempre datos completos)
+════════════════════════════════════════════════════════════════ */
+function buildProyeccion() {
+  // Regresión siempre sobre los 4 años para mayor precisión
+  const regIng    = linearRegression(resultados.ingresos);
+  const regUtil   = linearRegression(resultados.utilidadNeta);
+  const regActivo = linearRegression(balance.activoTotal);
+
+  const p2026Ing  = Math.round(regIng.predict(4));
+  const p2027Ing  = Math.round(regIng.predict(5));
+  const p2026Util = Math.round(regUtil.predict(4));
+  const p2027Util = Math.round(regUtil.predict(5));
+  const p2026Act  = Math.round(regActivo.predict(4));
+  const p2027Act  = Math.round(regActivo.predict(5));
+
+  const labExt  = [...ALL_YEARS, 2026, 2027];
+  const ingExt  = [...resultados.ingresos,   null, null];
+  const utilExt = [...resultados.utilidadNeta, null, null];
+  const ingProy = [null, null, null, resultados.ingresos[3],    p2026Ing,  p2027Ing];
+  const utlProy = [null, null, null, resultados.utilidadNeta[3],p2026Util, p2027Util];
+
+  // Marcar año activo con punto especial
+  const activeY = currentYear === 'all' ? null : +currentYear;
+  const pointR  = labExt.map(y => y === activeY ? 9 : 5);
+  const pointBC = labExt.map(y => y === activeY ? '#fff' : PALETTE.blue);
+
+  mkChart('chartProyeccion', {
+    type:'line',
+    data:{
+      labels: labExt,
+      datasets:[
+        { label:'Ingresos (histórico)',      data:ingExt,  borderColor:PALETTE.blue,  tension:.4, pointRadius:pointR, pointBackgroundColor:labExt.map(y=>y===activeY?'#fff':PALETTE.blue) },
+        { label:'Ingresos (proyectado)',     data:ingProy, borderColor:PALETTE.blue,  borderDash:[8,4], tension:.3, pointRadius:5, pointBackgroundColor:PALETTE.blue },
+        { label:'Utilidad Neta (histórico)', data:utilExt, borderColor:PALETTE.green, tension:.4, pointRadius:5, pointBackgroundColor:labExt.map(y=>y===activeY?'#fff':PALETTE.green) },
+        { label:'Utilidad (proyectada)',     data:utlProy, borderColor:PALETTE.green, borderDash:[8,4], tension:.3, pointRadius:5, pointBackgroundColor:PALETTE.green },
+      ]
+    },
+    options:{ responsive:true, plugins:{legend:{position:'top'}, tooltip:{callbacks:{label:c=>c.raw!=null?`$${fmt(c.raw)} miles`:'—'}}},
+      scales:{ x:{ticks:tickOpts,grid:gridOpts}, y:{ticks:tickOpts,grid:gridOpts} } }
+  });
+
+  // Tabla proyección
+  document.getElementById('tbodyProyeccion').innerHTML = `
+    <tr><td>Ingresos Estimados</td>    <td class="num" style="color:var(--accent)">$${fmt(p2026Ing)}</td> <td class="num" style="color:var(--accent)">$${fmt(p2027Ing)}</td></tr>
+    <tr><td>Utilidad Neta Estimada</td><td class="num" style="color:var(--accent3)">$${fmt(p2026Util)}</td><td class="num" style="color:var(--accent3)">$${fmt(p2027Util)}</td></tr>
+    <tr><td>Activo Total Estimado</td> <td class="num" style="color:var(--accent2)">$${fmt(p2026Act)}</td> <td class="num" style="color:var(--accent2)">$${fmt(p2027Act)}</td></tr>
+    <tr><td>Margen Neto Estimado</td>  <td class="num">${((p2026Util/p2026Ing)*100).toFixed(1)}%</td><td class="num">${((p2027Util/p2027Ing)*100).toFixed(1)}%</td></tr>
+  `;
+
+  // Crecimiento YoY — barras
+  const pares = [[2022,2023],[2023,2024],[2024,2025]];
+  document.getElementById('growthBars').innerHTML = pares.map(([a,b])=>{
+    const ia = ALL_YEARS.indexOf(a), ib = ALL_YEARS.indexOf(b);
+    const gI = ((resultados.ingresos[ib]-resultados.ingresos[ia])/resultados.ingresos[ia]*100).toFixed(1);
+    const gU = ((resultados.utilidadNeta[ib]-resultados.utilidadNeta[ia])/resultados.utilidadNeta[ia]*100).toFixed(1);
+    const active = (currentYear==='all' || +currentYear===b || +currentYear===a);
+    const op = active ? '1' : '0.35';
+    const cI = +gI>=0?'#00c8ff':'#ff4d6d';
+    const cU = +gU>=0?'#00e5a0':'#ff4d6d';
+    return `
+      <div class="growth-bar-wrap" style="opacity:${op}">
+        <div class="growth-label"><span>${a}→${b} Ingresos</span><span style="color:${cI};font-weight:700">${sign(gI)}${gI}%</span></div>
+        <div class="growth-bar"><div class="growth-fill" style="width:${Math.min(Math.abs(gI)*10,100)}%;background:${cI}"></div></div>
+      </div>
+      <div class="growth-bar-wrap" style="opacity:${op}">
+        <div class="growth-label"><span>${a}→${b} Utilidad</span><span style="color:${cU};font-weight:700">${sign(gU)}${gU}%</span></div>
+        <div class="growth-bar"><div class="growth-fill" style="width:${Math.min(Math.abs(gU)*10,100)}%;background:${cU}"></div></div>
+      </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECCIÓN: ALERTAS AUTOMÁTICAS
+════════════════════════════════════════════════════════════════ */
+function buildAlertas() {
+  const i       = activeIdx();
+  const year    = ALL_YEARS[i];
+  const alertas = [];
+
+  // Liquidez
+  const liq = ratios.liquidez[i];
+  if (liq >= 1.5) alertas.push({cls:'success',icon:'bi-check-circle',title:`✅ Liquidez Saludable (${year})`,desc:`Razón de liquidez: ${liq.toFixed(4)} — supera el umbral de 1.5. La empresa cubre sus obligaciones de corto plazo con holgura.`});
+  else if (liq>=1) alertas.push({cls:'warning',icon:'bi-exclamation-triangle',title:`⚠ Liquidez en Riesgo (${year})`,desc:`Razón de liquidez: ${liq.toFixed(4)} — entre 1.0 y 1.5. Se recomienda reducir pasivos circulantes.`});
+  else alertas.push({cls:'danger',icon:'bi-x-octagon',title:`🚨 Liquidez Crítica (${year})`,desc:`Razón de liquidez: ${liq.toFixed(4)} — inferior a 1.0. Riesgo inmediato de insolvencia a corto plazo.`});
+
+  // Endeudamiento
+  const end = ratios.endeudamiento[i];
+  if (end < 0.4) alertas.push({cls:'success',icon:'bi-shield-check',title:`✅ Endeudamiento Controlado (${year})`,desc:`Nivel de endeudamiento: ${(end*100).toFixed(2)}% — por debajo del 40%. Perfil de riesgo financiero bajo.`});
+  else if (end<0.6) alertas.push({cls:'warning',icon:'bi-exclamation-diamond',title:`⚠ Endeudamiento Moderado (${year})`,desc:`Endeudamiento en ${(end*100).toFixed(2)}%. Monitorear la estructura de capital.`});
+  else alertas.push({cls:'danger',icon:'bi-fire',title:`🚨 Alto Endeudamiento (${year})`,desc:`Endeudamiento en ${(end*100).toFixed(2)}%. Priorizar reducción de deuda.`});
+
+  // Tendencia utilidad YoY
+  if (i > 0) {
+    const util_act  = resultados.utilidadNeta[i];
+    const util_prev = resultados.utilidadNeta[i-1];
+    const prev_year = ALL_YEARS[i-1];
+    if (util_act > util_prev)
+      alertas.push({cls:'success',icon:'bi-graph-up-arrow',title:`✅ Utilidad Creciente ${prev_year}→${year}`,desc:`Utilidad pasó de $${fmt(util_prev)} (${prev_year}) a $${fmt(util_act)} (${year}).`});
+    else if (util_act === util_prev)
+      alertas.push({cls:'info',icon:'bi-dash-circle',title:`ℹ Utilidad Estancada ${prev_year}→${year}`,desc:`Utilidad idéntica en $${fmt(util_act)}. Explorar estrategias de crecimiento.`});
+    else
+      alertas.push({cls:'danger',icon:'bi-graph-down-arrow',title:`🚨 Caída en Utilidad ${prev_year}→${year}`,desc:`Utilidad bajó de $${fmt(util_prev)} a $${fmt(util_act)}. Revisar costos y gastos.`});
+  }
+
+  // Ciclo financiero
+  const cf = ratios.cicloFinanciero[i];
+  if (cf < 120) alertas.push({cls:'success',icon:'bi-clock-history',title:`✅ Ciclo Financiero Óptimo (${year})`,desc:`Ciclo financiero de ${cf.toFixed(2)} días — gestión eficiente del capital de trabajo.`});
+  else alertas.push({cls:'warning',icon:'bi-hourglass-split',title:`⚠ Ciclo Financiero Prolongado (${year})`,desc:`Ciclo financiero de ${cf.toFixed(2)} días. Negociar mejores plazos con proveedores o acelerar cobros.`});
+
+  // ROE
+  const roe = ratios.roe[i]*100;
+  if (roe>=20) alertas.push({cls:'success',icon:'bi-trophy',title:`✅ ROE Excelente (${year})`,desc:`ROE de ${roe.toFixed(2)}% supera el benchmark del 20%. Rendimiento atractivo para accionistas.`});
+  else alertas.push({cls:'info',icon:'bi-info-circle',title:`ℹ ROE por Mejorar (${year})`,desc:`ROE de ${roe.toFixed(2)}%. Estrategias de optimización de capital pueden elevar este indicador.`});
+
+  // Autonomía
+  const aut = ratios.autonomia[i]*100;
+  if (aut>=60) alertas.push({cls:'success',icon:'bi-building-check',title:`✅ Alta Autonomía Financiera (${year})`,desc:`Autonomía del ${aut.toFixed(2)}%. La empresa se autofinancia mayormente sin depender de deuda externa.`});
+  else alertas.push({cls:'warning',icon:'bi-building-exclamation',title:`⚠ Autonomía Mejorable (${year})`,desc:`Autonomía del ${aut.toFixed(2)}%. Incrementar reservas o reducir pasivos para mejorar la independencia financiera.`});
+
+  document.getElementById('alertas-container').innerHTML =
+    `<div class="alert-box info mb-3"><i class="bi bi-funnel"></i><div class="alt"><strong>Filtro activo: ${currentYear==='all'?'Todos los años (mostrando 2025)':year}</strong> — Las alertas se generan automáticamente según los indicadores del año seleccionado.</div></div>`
+    + alertas.map(a=>`
+    <div class="alert-box ${a.cls}">
+      <i class="bi ${a.icon}"></i>
+      <div class="alt"><strong>${a.title}</strong>${a.desc}</div>
+    </div>`).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECCIÓN: INTERPRETACIÓN AUTOMÁTICA
+════════════════════════════════════════════════════════════════ */
+function buildInterpretacion() {
+  const html = `
+  <div class="interp-card">
+    <h5><i class="bi bi-building" style="color:var(--accent)"></i> Resumen General de la Empresa Digital</h5>
+    <p>La empresa digital analizada muestra un desempeño financiero <strong>estable con tendencia positiva</strong> en el período 2022–2025. El activo total se mantiene en un rango de $7,110 a $7,470 miles, con una leve fluctuación que refleja decisiones de inversión controladas.</p>
+    <p>Los <strong>ingresos crecen consistentemente</strong> de $5,050 miles (2022) a $5,980 miles (2025), un incremento del 18.4% en el período, lo cual demuestra expansión en su base de clientes y servicios digitales.</p>
+  </div>
+
+  <div class="interp-card">
+    <h5><i class="bi bi-graph-up-arrow" style="color:var(--accent3)"></i> ¿Es Rentable la Empresa?</h5>
+    <p><strong>Sí, la empresa es rentable.</strong> La utilidad neta se mantiene en torno a $770–$800 miles durante todo el período. El ROI ronda el 10.8% y el ROE supera el 25%, ambos indicadores por encima de benchmarks aceptables para el sector digital.</p>
+    <p>El margen neto sobre ventas oscila entre el 13.5% y 15.4%. Si bien muestra una ligera compresión en 2025 (13.5%), esto se explica por el incremento en costos del servicio ($3,050 miles), probablemente asociado al crecimiento en la escala de operaciones.</p>
+  </div>
+
+  <div class="interp-card">
+    <h5><i class="bi bi-exclamation-triangle" style="color:var(--warn)"></i> Riesgos Detectados</h5>
+    <p><strong>1. Presión sobre márgenes:</strong> El costo del servicio en 2025 ($3,050 miles) creció un 12.9% respecto a 2024, mientras los ingresos crecieron solo 10.7%. Si esta tendencia continúa, el margen neto seguirá comprimiéndose.</p>
+    <p><strong>2. Ciclo financiero elevado:</strong> El ciclo financiero en 2023 alcanzó 143.5 días, el punto más alto del período. Aunque mejoró a 120.3 días en 2025, aún es alto. La empresa tarda más en recuperar su inversión operativa que en pagar a proveedores.</p>
+    <p><strong>3. Inventarios crecientes:</strong> Los días de inventario alcanzaron 160.6 en 2023, indicando posible acumulación de stock. Aunque se redujo a 125.7 días en 2025, representa un área de mejora para liberar capital de trabajo.</p>
+  </div>
+
+  <div class="interp-card">
+    <h5><i class="bi bi-stars" style="color:var(--accent2)"></i> Oportunidades de Mejora</h5>
+    <p><strong>1. Optimizar costos del servicio:</strong> Automatización de procesos digitales y economías de escala pueden reducir el costo incremental por cliente, mejorando el margen bruto.</p>
+    <p><strong>2. Acelerar cobros:</strong> Los días de cuentas por cobrar mejoraron de 62 (2024) a 47.6 (2025). Implementar facturación electrónica anticipada y descuentos por pronto pago puede reducirlos aún más.</p>
+    <p><strong>3. Diversificación de ingresos:</strong> Con base en las proyecciones lineales, los ingresos para 2026 se estiman en ~$6,540 miles. Inversión en nuevos productos digitales (SaaS, suscripciones) aceleraría este crecimiento.</p>
+    <p><strong>4. Estructura de capital:</strong> El nivel de endeudamiento cayó de 46.9% (2022) a 38.5% (2025), fortaleciendo la autonomía financiera. Existe margen para apalancar inversiones estratégicas de bajo riesgo.</p>
+  </div>
+
+  <div class="interp-card">
+    <h5><i class="bi bi-check2-all" style="color:var(--accent3)"></i> Conclusión Estratégica</h5>
+    <p>La empresa digital presenta <strong>fundamentos financieros sólidos</strong>: liquidez saludable (>2.1x en 2025), capital contable creciente ($5,250 miles), y deuda en descenso. Es una organización en posición favorable para afrontar 2026–2027 con estrategias de expansión moderada.</p>
+    <p>La principal área de atención es <strong>la eficiencia operativa</strong>: controlar el crecimiento de costos del servicio y optimizar la gestión del ciclo operativo para liberar liquidez y sostener márgenes. Con las medidas correctas, la empresa tiene potencial de alcanzar márgenes netos superiores al 15% en los próximos dos años.</p>
+  </div>
+  `;
+  document.getElementById('interp-container').innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NAVEGACIÓN ENTRE SECCIONES
+════════════════════════════════════════════════════════════════ */
+function showSection(id) {
+  document.querySelectorAll('.section-view').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  // Marcar nav activo
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if (n.getAttribute('onclick')?.includes(`'${id}'`)) n.classList.add('active');
+  });
+  // Rebuild charts según sección
+  const builders = {
+    inicio:        buildChartInicio,
+    situacion:     buildChartSituacion,
+    resultados:    buildChartResultados,
+    liquidez:      buildLiquidez,
+    rentabilidad:  buildRentabilidad,
+    gestion:       buildGestion,
+    proyeccion:    buildProyeccion,
+    alertas:       buildAlertas,
+    interpretacion:buildInterpretacion,
+  };
+  if (builders[id]) builders[id]();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INICIALIZACIÓN
+════════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderKPIs();
+  renderSemaforo();
+  buildChartInicio();
+  buildChartSituacion();   // pre-build para el tab
+  buildChartResultados();
+  buildLiquidez();
+  buildRentabilidad();
+  buildGestion();
+  buildProyeccion();
+  buildAlertas();
+  buildInterpretacion();
+});
+</script>
+</body>
+</html>
